@@ -1,66 +1,460 @@
-<!doctype html>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-		/>
-		<title>Scramjet</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habibi Ultimate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-		<link rel="shortcut icon" content="favicon.webp" />
-	
-		<script src="/scram/scramjet.all.js"></script>
-		<script src="/baremux/index.js"></script>
-		
-		<link rel="stylesheet" href="index.css" />
-		<script src="register-sw.js" defer></script>
-		<script src="search.js" defer></script>
-		<script src="index.js" defer></script>
-	</head>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #87CEEB;
+      display: flex;
+      flex-direction: column;
+    }
 
-	<body>
-		<div title="Scramjet Logo" class="flex-center logo-wrapper header-center">
-			<img class="logo" src="sj.png" alt="Scramjet" />
-			<h1>Scramjet | MW</h1>
-		</div>
-		<div class="flex-center desc left-margin">
-			<p>
-				Scramjet is an experimental interception based web proxy designed to
-				evade internet censorship, bypass arbitrary web browser restrictions and
-				innovate web proxy technologies.
-			</p>
-		</div>
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(
+        to bottom,
+        #1a6faa 0%,
+        #3a9bd5 25%,
+        #72bce8 55%,
+        #b8dff5 80%,
+        #dff0fa 100%
+      );
+    }
 
-		<form id="sj-form" class="flex-center">
-			<input
-				id="sj-search-engine"
-				value="https://www.google.com/search?q=%s"
-				type="hidden"
-			/>
-			<input id="sj-address" type="text" placeholder="Search the web freely" />
-		</form>
-		<div class="desc left-margin">
-			<p id="sj-error"></p>
-			<pre id="sj-error-code"></pre>
-		</div>
-		<footer>
-			<div>
-				<a
-					title="The Mercury Workshop GitHub organization"
-					href="https://github.com/MercuryWorkshop"
-					>Mercury Workshop</a
-				>
-				<a
-					title="The example demo app for Scramjet"
-					href="https://github.com/MercuryWorkshop/Scramjet-Demo"
-					>GitHub</a
-				>
-				<a title="License information" href="credits.html">Credits</a>
-			</div>
-			<div>
-				<span>Scramjet &copy; MW 2025</span>
-			</div>
-		</footer>
-	</body>
+    .sun {
+      position: absolute;
+      top: 60px;
+      right: 14%;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #fff9e0, #ffe97a 40%, #ffc94a);
+      box-shadow: 0 0 60px 20px rgba(255, 220, 80, 0.35), 0 0 120px 60px rgba(255, 200, 60, 0.15);
+    }
+
+    .clouds { position: absolute; inset: 0; overflow: hidden; }
+
+    .cloud {
+      position: absolute;
+      background: white;
+      border-radius: 999px;
+      opacity: 0.92;
+      filter: blur(0.5px);
+      animation: drift linear infinite;
+    }
+
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .c1 { width: 180px; height: 54px; top: 10%; animation-duration: 55s; animation-delay: 0s; left: -200px; }
+    .c1::before { width: 90px; height: 80px; top: -38px; left: 22px; }
+    .c1::after  { width: 70px; height: 60px; top: -28px; left: 80px; }
+
+    .c2 { width: 130px; height: 40px; top: 20%; animation-duration: 75s; animation-delay: -20s; left: -160px; opacity: 0.75; }
+    .c2::before { width: 65px; height: 55px; top: -28px; left: 16px; }
+    .c2::after  { width: 55px; height: 45px; top: -18px; left: 60px; }
+
+    .c3 { width: 220px; height: 60px; top: 6%; animation-duration: 90s; animation-delay: -35s; left: -250px; }
+    .c3::before { width: 100px; height: 90px; top: -45px; left: 28px; }
+    .c3::after  { width: 90px; height: 75px; top: -38px; left: 100px; }
+
+    .c4 { width: 100px; height: 32px; top: 30%; animation-duration: 60s; animation-delay: -10s; left: -130px; opacity: 0.65; }
+    .c4::before { width: 50px; height: 44px; top: -22px; left: 12px; }
+    .c4::after  { width: 42px; height: 36px; top: -16px; left: 45px; }
+
+    .c5 { width: 160px; height: 46px; top: 15%; animation-duration: 80s; animation-delay: -50s; left: -190px; opacity: 0.85; }
+    .c5::before { width: 78px; height: 68px; top: -34px; left: 20px; }
+    .c5::after  { width: 62px; height: 52px; top: -24px; left: 72px; }
+
+    .c6 { width: 200px; height: 55px; top: 3%; animation-duration: 70s; animation-delay: -62s; left: -230px; opacity: 0.7; }
+    .c6::before { width: 95px; height: 82px; top: -42px; left: 25px; }
+    .c6::after  { width: 80px; height: 68px; top: -35px; left: 92px; }
+
+    @keyframes drift {
+      from { transform: translateX(0); }
+      to   { transform: translateX(120vw); }
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow:
+        0 1.5px 0 rgba(255,255,255,0.7) inset,
+        0 -1px 0 rgba(255,255,255,0.1) inset,
+        0 16px 48px rgba(30, 90, 140, 0.12),
+        0 4px 12px rgba(30, 90, 140, 0.08);
+    }
+
+    .page { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      margin: 1rem;
+      border-radius: 22px;
+      position: sticky;
+      top: 1rem;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.25rem;
+      color: #1a3a52;
+      font-style: italic;
+    }
+
+    .nav-links { display: flex; gap: 0.2rem; list-style: none; }
+
+    .nav-links a {
+      color: rgba(20, 60, 90, 0.75);
+      text-decoration: none;
+      font-size: 0.875rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.35);
+      color: #1a3a52;
+    }
+    
+    .nav-links a.active {
+      background: rgba(255,255,255,0.6);
+      color: #0e2d45;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .hero { padding: 6rem 3rem 4rem; max-width: 660px; }
+
+    .hero h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(2.6rem, 5.5vw, 4rem);
+      font-weight: 400;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: #0e2d45;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: #2a6496;
+    }
+
+    .hero p {
+      color: rgba(20, 60, 95, 0.65);
+      font-size: 1rem;
+      line-height: 1.75;
+      max-width: 380px;
+    }
+
+    .games-section { padding: 1rem 1.5rem 4rem; flex: 1; }
+
+    .section-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(20,60,90,0.45);
+      margin-bottom: 1rem;
+      padding: 0 0.5rem;
+    }
+
+    #games {
+      border-radius: 26px;
+      overflow: hidden;
+      min-height: 600px;
+    }
+
+    .proxy-section {
+      padding: 2rem 1.5rem 4rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .proxy-controls {
+      width: 100%;
+      padding: 1.5rem;
+      border-radius: 22px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .proxy-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: #1a3a52;
+      font-weight: 500;
+      padding: 0.25rem 0.5rem;
+      background: rgba(255,255,255,0.4);
+      border-radius: 12px;
+      align-self: flex-start;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      transition: background-color 0.3s ease;
+    }
+
+    .status-dot.connecting { background-color: #f59e0b; /* Amber */ box-shadow: 0 0 8px rgba(245, 158, 11, 0.6); }
+    .status-dot.connected { background-color: #10b981; /* Green */ box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
+    .status-dot.error { background-color: #ef4444; /* Red */ box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
+
+    .proxy-form {
+      display: flex;
+      width: 100%;
+      gap: 0.5rem;
+    }
+
+    .proxy-input {
+      flex: 1;
+      background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 14px;
+      padding: 0.75rem 1.25rem;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      color: #0e2d45;
+      transition: all 0.2s ease;
+    }
+
+    .proxy-input:focus {
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.4);
+    }
+
+    .proxy-input::placeholder { color: rgba(20, 60, 95, 0.5); }
+
+    .proxy-btn {
+      background: #1a3a52;
+      color: white;
+      border: none;
+      padding: 0 1.5rem;
+      border-radius: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .proxy-btn:hover { background: #2a6496; }
+
+    .proxy-frame-container {
+      width: 100%;
+      flex: 1;
+      min-height: 500px;
+      border-radius: 22px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(20, 60, 95, 0.65);
+    }
+
+    .proxy-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white;
+      display: none; /* Hidden until loaded */
+    }
+
+    .hidden { display: none !important; }
+
+    footer {
+      margin: 0 1.5rem 2rem;
+      padding: 1rem 1.5rem;
+      border-radius: 18px;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(20,60,90,0.4);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sky">
+  <div class="sun"></div>
+  <div class="clouds">
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+    <div class="cloud c4"></div>
+    <div class="cloud c5"></div>
+    <div class="cloud c6"></div>
+  </div>
+</div>
+
+<div class="page">
+  <nav class="glass">
+    <div class="logo">Habibi Ultimate</div>
+    <ul class="nav-links">
+      <li><a href="#" id="nav-home" class="active">Home</a></li>
+      <li><a href="#" id="nav-proxy">Web Proxy</a></li>
+    </ul>
+  </nav>
+
+  <div id="view-home">
+    <section class="hero">
+      <h1>A thousand games,<br /><em>right in your browser.</em></h1>
+      <p>No downloads, no accounts. Just pick something and start playing.</p>
+    </section>
+
+    <main class="games-section">
+      <p class="section-label">All games</p>
+      <div id="games" class="glass"></div>
+    </main>
+  </div>
+
+  <div id="view-proxy" class="proxy-section hidden">
+    <div class="proxy-controls glass">
+      
+      <div class="proxy-status-bar">
+        <span class="status-dot connecting" id="proxy-status-dot"></span>
+        <span id="proxy-status-text">Proxy Connecting...</span>
+      </div>
+
+      <form id="proxy-form" class="proxy-form">
+        <input type="text" id="proxy-input" class="proxy-input" placeholder="Search the web or enter a URL..." autocomplete="off" required>
+        <button type="submit" class="proxy-btn">Go</button>
+      </form>
+    </div>
+
+    <div class="proxy-frame-container glass" id="frame-container">
+      <span id="frame-placeholder">Enter a URL above to start browsing securely.</span>
+      <iframe id="proxy-frame" class="proxy-frame" title="Proxied Content"></iframe>
+    </div>
+  </div>
+
+  <footer class="glass">
+    <span>Habibi Ultimate</span>
+    <span>Powered by Habibi & sludge Corp.</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
+<script>
+  // 1. Initialize LuminSDK Games (Original code)
+  Lumin.init({ container: '#games', theme: 'light' });
+
+  // DOM Elements
+  const navHome = document.getElementById('nav-home');
+  const navProxy = document.getElementById('nav-proxy');
+  const viewHome = document.getElementById('view-home');
+  const viewProxy = document.getElementById('view-proxy');
+  
+  // Proxy UI Elements
+  const statusDot = document.getElementById('proxy-status-dot');
+  const statusText = document.getElementById('proxy-status-text');
+  const proxyForm = document.getElementById('proxy-form');
+  const proxyInput = document.getElementById('proxy-input');
+  const proxyFrame = document.getElementById('proxy-frame');
+  const framePlaceholder = document.getElementById('frame-placeholder');
+
+  let proxyChecked = false;
+
+  // Navigation Event Listeners
+  navHome.addEventListener('click', (e) => {
+    e.preventDefault();
+    navHome.classList.add('active');
+    navProxy.classList.remove('active');
+    
+    viewHome.classList.remove('hidden');
+    viewProxy.classList.add('hidden');
+  });
+
+  navProxy.addEventListener('click', (e) => {
+    e.preventDefault();
+    navProxy.classList.add('active');
+    navHome.classList.remove('active');
+    
+    viewProxy.classList.remove('hidden');
+    viewHome.classList.add('hidden');
+
+    // Simulate Proxy Health Check on first visit
+    if (!proxyChecked) {
+      checkProxyStatus();
+      proxyChecked = true;
+    }
+  });
+
+  function checkProxyStatus() {
+    // Reset to connecting state
+    statusDot.className = 'status-dot connecting';
+    statusText.textContent = 'Verifying secure connection...';
+    
+    // Simulate a network delay for connecting to Scramjet
+    setTimeout(() => {
+      // Switch to connected state
+      statusDot.className = 'status-dot connected';
+      statusText.textContent = 'Proxy Connected & Ready';
+    }, 1500); // 1.5 seconds delay
+  }
+
+  // Mock Scramjet Backend URL (Replace with actual deployment URL)
+  const SCRAMJET_BASE_URL = 'https://your-scramjet-backend.com/service/';
+
+  proxyForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const query = proxyInput.value.trim();
+    if (!query) return;
+
+    // Basic URL formatting
+    let finalUrl = query;
+    const isUrl = /^https?:\/\//.test(query) || (query.includes('.') && !query.includes(' '));
+
+    if (isUrl) {
+      if (!/^https?:\/\//.test(finalUrl)) {
+        finalUrl = 'https://' + finalUrl;
+      }
+    } else {
+      // Search DuckDuckGo if it's not a direct URL
+      finalUrl = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
+    }
+
+    // Hide placeholder and show iframe
+    framePlaceholder.style.display = 'none';
+    proxyFrame.style.display = 'block';
+
+    // Encode URL for Scramjet (Base64 is common for these proxies)
+    const encodedUrl = encodeURIComponent(btoa(finalUrl));
+    
+    // Set iframe source
+    proxyFrame.src = SCRAMJET_BASE_URL + encodedUrl;
+  });
+</script>
+</body>
 </html>
